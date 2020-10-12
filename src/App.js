@@ -10,26 +10,23 @@ function App() {
 
     const container = new PIXI.Container();
     const empty = PIXI.Texture.from('./empty.png');
-    const hole = PIXI.Texture.from('./hole.png');
     const peg = PIXI.Texture.from('./peg.png');
+    const border = PIXI.Texture.from('./border.png');
 
     app.stage.addChild(container);
+
+    const emptySprite = new PIXI.Sprite(empty);
+    emptySprite.anchor.set(0.5);
+    emptySprite.x = (24 % 7) * 95;
+    emptySprite.y = Math.floor(24 / 7) * 95;
+    container.addChild(emptySprite);
 
     for (let i = 0; i < 49; ++i) {
       if (i === 0 || i === 1 || i === 5 || i === 6 ||
         i === 7 || i === 8 || i === 12 || i === 13 ||
-        i === 35 || i === 36 || i === 40 || i === 41 ||
-        i === 42 || i === 43 || i === 47 || i === 48) {
+        i === 24 || i === 35 || i === 36 || i === 40 ||
+        i === 41 || i === 42 || i === 43 || i === 47 || i === 48) {
         continue;
-      }
-
-      let tileSprite;
-
-      if (i === 24) {
-        tileSprite = new PIXI.Sprite(empty);
-      }
-      else {
-        tileSprite = new PIXI.Sprite(hole);
       }
 
       const pegSprite = new PIXI.Sprite(peg);
@@ -47,10 +44,11 @@ function App() {
         .on('touchend', onDragEnd);
       container.addChild(pegSprite);
 
-      tileSprite.anchor.set(0.5);
-      tileSprite.x = (i % 7) * 95;
-      tileSprite.y = Math.floor(i / 7) * 95;
-      container.addChild(tileSprite);
+      const borderSprite = new PIXI.Sprite(border);
+      borderSprite.anchor.set(0.5);
+      borderSprite.x = (i % 7) * 95;
+      borderSprite.y = Math.floor(i / 7) * 95;
+      container.addChild(borderSprite);
     }
 
     container.x = app.screen.width / 2;
@@ -64,7 +62,7 @@ function App() {
       this.dragging = true;
     }
 
-    function onDragMove () {
+    function onDragMove() {
       if (this.dragging) {
         const position = this.data.getLocalPosition(this.parent);
         this.position.x = position.x;
@@ -73,6 +71,9 @@ function App() {
     }
 
     function onDragEnd() {
+      const position = this.data.getLocalPosition(this.parent);
+      this.position.x = Math.round(position.x / 95) * 95;
+      this.position.y = Math.round(position.y / 95) * 95;
       this.data = null;
       this.alpha = 1;
       this.dragging = false;
@@ -86,7 +87,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <div id="container" style={{width: window.innerWidth, height: window.innerHeight, backgroundColor: "#4e214d"}} />
+        <div id="container" style={{ width: window.innerWidth, height: window.innerHeight, backgroundColor: "#4e214d" }} />
       </header>
     </div>
   );
