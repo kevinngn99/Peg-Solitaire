@@ -35,7 +35,8 @@ function App() {
     width: window.innerWidth,
     height: window.innerHeight,
     backgroundColor: 0x131342,
-    resolution: window.devicePixelRatio || 1
+    resolution: window.devicePixelRatio || 1,
+    antialias: true
   }));
 
   useEffect(() => {
