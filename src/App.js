@@ -2,8 +2,23 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import * as PIXI from 'pixi.js';
 
+class ArraySet extends Set {
+  add(array) {
+    super.add(array.toString());
+  }
+
+  has(array) {
+    return super.has(array.toString());
+  }
+}
+
 function App() {
-  const [app, setApp] = useState(new PIXI.Application({ width: window.innerWidth, height: window.innerHeight, backgroundColor: 0x4e214d, resolution: window.devicePixelRatio || 1 }));
+  const [app, setApp] = useState(new PIXI.Application({ 
+    width: window.innerWidth,
+    height: window.innerHeight,
+    backgroundColor: 0x4e214d,
+    resolution: window.devicePixelRatio || 1
+  }));
 
   useEffect(() => {
     document.getElementById('container').appendChild(app.view);
@@ -21,36 +36,26 @@ function App() {
     emptySprite.y = Math.floor(24 / 7) * 95;
     container.addChild(emptySprite);
 
-    let banned = new Set();
-    banned.add(((0 % 7) * 95).toString().concat((Math.floor(0 / 7) * 95).toString()));
-    banned.add(((1 % 7) * 95).toString().concat((Math.floor(1 / 7) * 95).toString()));
-    banned.add(((5 % 7) * 95).toString().concat((Math.floor(5 / 7) * 95).toString()));
-    banned.add(((6 % 7) * 95).toString().concat((Math.floor(6 / 7) * 95).toString()));
-    banned.add(((7 % 7) * 95).toString().concat((Math.floor(7 / 7) * 95).toString()));
-    banned.add(((8 % 7) * 95).toString().concat((Math.floor(8 / 7) * 95).toString()));
-    banned.add(((12 % 7) * 95).toString().concat((Math.floor(12 / 7) * 95).toString()));
-    banned.add(((13 % 7) * 95).toString().concat((Math.floor(13 / 7) * 95).toString()));
-    banned.add(((35 % 7) * 95).toString().concat((Math.floor(35 / 7) * 95).toString()));
-    banned.add(((36 % 7) * 95).toString().concat((Math.floor(36 / 7) * 95).toString()));
-    banned.add(((40 % 7) * 95).toString().concat((Math.floor(40 / 7) * 95).toString()));
-    banned.add(((41 % 7) * 95).toString().concat((Math.floor(41 / 7) * 95).toString()));
-    banned.add(((42 % 7) * 95).toString().concat((Math.floor(42 / 7) * 95).toString()));
-    banned.add(((43 % 7) * 95).toString().concat((Math.floor(43 / 7) * 95).toString()));
-    banned.add(((47 % 7) * 95).toString().concat((Math.floor(47 / 7) * 95).toString()));
-    banned.add(((48 % 7) * 95).toString().concat((Math.floor(48 / 7) * 95).toString()));
+    let banned = new ArraySet();
+    const corners = [0, 1, 5, 6, 7, 8, 12, 13, 35, 36, 40, 41, 42, 43, 47, 48];
 
     for (let i = 0; i < 49; ++i) {
-      if (i === 0 || i === 1 || i === 5 || i === 6 ||
-        i === 7 || i === 8 || i === 12 || i === 13 ||
-        i === 24 || i === 35 || i === 36 || i === 40 ||
-        i === 41 || i === 42 || i === 43 || i === 47 || i === 48) {
+      if (i === 24) {
+        continue;
+      }
+
+      const x = (i % 7) * 95;
+      const y = Math.floor(i / 7) * 95;
+
+      if (corners.includes(i)) {
+        banned.add([x, y]);
         continue;
       }
 
       const pegSprite = new PIXI.Sprite(peg);
       pegSprite.anchor.set(0.5);
-      pegSprite.x = (i % 7) * 95;
-      pegSprite.y = Math.floor(i / 7) * 95;
+      pegSprite.x = x;
+      pegSprite.y = y;
       pegSprite.interactive = true;
       pegSprite.buttonMode = true;
       pegSprite
@@ -66,8 +71,8 @@ function App() {
 
       const borderSprite = new PIXI.Sprite(border);
       borderSprite.anchor.set(0.5);
-      borderSprite.x = (i % 7) * 95;
-      borderSprite.y = Math.floor(i / 7) * 95;
+      borderSprite.x = x;
+      borderSprite.y = y;
       container.addChild(borderSprite);
     }
 
@@ -77,14 +82,14 @@ function App() {
     container.pivot.y = container.height / 2;
 
     const a = container.getBounds();
-    let x, y;
+    let originX, originY;
 
     function onDragStart(event) {
       this.data = event.data;
       this.alpha = 0.5;
       this.dragging = true;
-      x = this.x;
-      y = this.y;
+      originX = this.x;
+      originY = this.y;
     }
 
     function onDragMove() {
@@ -98,24 +103,24 @@ function App() {
     function onDragEnd() {
       const b = this.getBounds();
 
-      if (a.x + a.width > b.x && a.x < b.x + b.width &&
-        a.y + a.height > b.y && a.y < b.y + b.height) {
-        let xx = Math.abs(Math.round(this.x / 95) * 95);
-        let yy = Math.abs(Math.round(this.y / 95) * 95);
+      if (a.x + a.width > b.x && a.x < b.x + b.width && a.y + a.height > b.y && a.y < b.y + b.height) {
+        let destX = Math.abs(Math.round(this.x / 95) * 95);
+        let destY = Math.abs(Math.round(this.y / 95) * 95);
 
-        if (banned.has(xx.toString().concat(yy.toString()))) {
-          this.x = x;
-          this.y = y;
+        if (banned.has([destX, destY])) {
+          this.x = originX;
+          this.y = originY;
         }
         else {
-          this.x = xx;
-          this.y = yy;
+          this.x = destX;
+          this.y = destY;
         }
       }
       else {
-        this.x = x;
-        this.y = y;
+        this.x = originX;
+        this.y = originY;
       }
+
       this.data = null;
       this.alpha = 1;
       this.dragging = false;
