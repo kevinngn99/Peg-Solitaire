@@ -3,12 +3,22 @@ import './App.css';
 import * as PIXI from 'pixi.js';
 
 class ArraySet extends Set {
-  add(array) {
-    super.add(array.toString());
+  add(value) {
+    super.add(value.toString());
   }
 
-  has(array) {
-    return super.has(array.toString());
+  has(value) {
+    return super.has(value.toString());
+  }
+}
+
+class ArrayMap extends Map {
+  set(key, value) {
+    super.set(key.toString(), value);
+  }
+
+  has(key) {
+    return super.has(key.toString());
   }
 }
 
@@ -37,6 +47,7 @@ function App() {
     container.addChild(emptySprite);
 
     let banned = new ArraySet();
+    let master = new ArrayMap();
     const corners = [0, 1, 5, 6, 7, 8, 12, 13, 35, 36, 40, 41, 42, 43, 47, 48];
 
     for (let i = 0; i < 49; ++i) {
@@ -69,6 +80,8 @@ function App() {
         .on('touchendoutside', onDragEnd);
       container.addChild(pegSprite);
 
+      master.set([x, y], container.getChildIndex(pegSprite));
+
       const borderSprite = new PIXI.Sprite(border);
       borderSprite.anchor.set(0.5);
       borderSprite.x = x;
@@ -87,13 +100,12 @@ function App() {
     function onDragStart(event) {
       this.data = event.data;
       this.alpha = 0.5;
-      this.dragging = true;
       originX = this.x;
       originY = this.y;
     }
 
     function onDragMove() {
-      if (this.dragging) {
+      if (this.data) {
         const position = this.data.getLocalPosition(this.parent);
         this.x = position.x;
         this.y = position.y;
@@ -101,29 +113,44 @@ function App() {
     }
 
     function onDragEnd() {
-      const b = this.getBounds();
+      if (this.data) {
+        const b = this.getBounds();
 
-      if (a.x + a.width > b.x && a.x < b.x + b.width && a.y + a.height > b.y && a.y < b.y + b.height) {
-        let destX = Math.abs(Math.round(this.x / 95) * 95);
-        let destY = Math.abs(Math.round(this.y / 95) * 95);
+        if (a.x + a.width > b.x && a.x < b.x + b.width && a.y + a.height > b.y && a.y < b.y + b.height) {
+          const destX = Math.abs(Math.round(this.x / 95) * 95);
+          const destY = Math.abs(Math.round(this.y / 95) * 95);
 
-        if (banned.has([destX, destY])) {
+          const distX = Math.abs(destX - originX);
+          const distY = Math.abs(destY - originY);
+
+          if (!banned.has([destX, destY])) {
+            if (distX === 190 && distY === 0) {
+              this.x = destX;
+              this.y = destY;
+            }
+            else if (distX === 0 && distY === 190) {
+              this.x = destX;
+              this.y = destY;
+            }
+            else {
+              this.x = originX;
+              this.y = originY;
+            }
+            //if i change x, y, need to change i too
+          }
+          else {
+            this.x = originX;
+            this.y = originY;
+          }
+        }
+        else {
           this.x = originX;
           this.y = originY;
         }
-        else {
-          this.x = destX;
-          this.y = destY;
-        }
-      }
-      else {
-        this.x = originX;
-        this.y = originY;
-      }
 
-      this.data = null;
-      this.alpha = 1;
-      this.dragging = false;
+        this.data = null;
+        this.alpha = 1;
+      }
     }
 
     return () => {
