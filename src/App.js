@@ -34,7 +34,7 @@ function App() {
   const [app, setApp] = useState(new PIXI.Application({ 
     width: window.innerWidth,
     height: window.innerHeight,
-    backgroundColor: 0x4e214d,
+    backgroundColor: 0x131342,
     resolution: window.devicePixelRatio || 1
   }));
 
@@ -44,15 +44,14 @@ function App() {
     const container = new PIXI.Container();
     const empty = PIXI.Texture.from('./empty.png');
     const peg = PIXI.Texture.from('./peg.png');
-    const border = PIXI.Texture.from('./border.png');
 
     app.stage.addChild(container);
 
-    const emptySprite = new PIXI.Sprite(empty);
-    emptySprite.anchor.set(0.5);
-    emptySprite.x = (24 % 7) * 95;
-    emptySprite.y = Math.floor(24 / 7) * 95;
-    container.addChild(emptySprite);
+    const centerSprite = new PIXI.Sprite(empty);
+    centerSprite.anchor.set(0.5);
+    centerSprite.x = (24 % 7) * 95;
+    centerSprite.y = Math.floor(24 / 7) * 95;
+    container.addChild(centerSprite);
 
     let banned = new ArraySet();
     let master = new ArrayMap();
@@ -85,11 +84,11 @@ function App() {
   
           master.set([x, y], pegSprite);
   
-          const borderSprite = new PIXI.Sprite(border);
-          borderSprite.anchor.set(0.5);
-          borderSprite.x = x;
-          borderSprite.y = y;
-          container.addChild(borderSprite);
+          const emptySprite = new PIXI.Sprite(empty);
+          emptySprite.anchor.set(0.5);
+          emptySprite.x = x;
+          emptySprite.y = y;
+          container.addChild(emptySprite);
         }
       }
     }
