@@ -10,6 +10,10 @@ class ArraySet extends Set {
   has(value) {
     return super.has(value.toString());
   }
+
+  delete(value) {
+    super.delete(value.toString());
+  }
 }
 
 class ArrayMap extends Map {
@@ -19,6 +23,10 @@ class ArrayMap extends Map {
 
   has(key) {
     return super.has(key.toString());
+  }
+
+  get(key) {
+    return super.get(key.toString());
   }
 }
 
@@ -51,42 +59,39 @@ function App() {
     const corners = [0, 1, 5, 6, 7, 8, 12, 13, 35, 36, 40, 41, 42, 43, 47, 48];
 
     for (let i = 0; i < 49; ++i) {
-      if (i === 24) {
-        continue;
-      }
+      if (i !== 24) {
+        const x = (i % 7) * 95;
+        const y = Math.floor(i / 7) * 95;
 
-      const x = (i % 7) * 95;
-      const y = Math.floor(i / 7) * 95;
-
-      if (corners.includes(i)) {
         banned.add([x, y]);
-        continue;
+  
+        if (!corners.includes(i)) {
+          const pegSprite = new PIXI.Sprite(peg);
+          pegSprite.anchor.set(0.5);
+          pegSprite.x = x;
+          pegSprite.y = y;
+          pegSprite.interactive = true;
+          pegSprite.buttonMode = true;
+          pegSprite
+            .on('mousedown', onDragStart)
+            .on('mousemove', onDragMove)
+            .on('mouseup', onDragEnd)
+            .on('mouseupoutside', onDragEnd)
+            .on('touchstart', onDragStart)
+            .on('touchmove', onDragMove)
+            .on('touchend', onDragEnd)
+            .on('touchendoutside', onDragEnd);
+          container.addChild(pegSprite);
+  
+          master.set([x, y], pegSprite);
+  
+          const borderSprite = new PIXI.Sprite(border);
+          borderSprite.anchor.set(0.5);
+          borderSprite.x = x;
+          borderSprite.y = y;
+          container.addChild(borderSprite);
+        }
       }
-
-      const pegSprite = new PIXI.Sprite(peg);
-      pegSprite.anchor.set(0.5);
-      pegSprite.x = x;
-      pegSprite.y = y;
-      pegSprite.interactive = true;
-      pegSprite.buttonMode = true;
-      pegSprite
-        .on('mousedown', onDragStart)
-        .on('mousemove', onDragMove)
-        .on('mouseup', onDragEnd)
-        .on('mouseupoutside', onDragEnd)
-        .on('touchstart', onDragStart)
-        .on('touchmove', onDragMove)
-        .on('touchend', onDragEnd)
-        .on('touchendoutside', onDragEnd);
-      container.addChild(pegSprite);
-
-      master.set([x, y], container.getChildIndex(pegSprite));
-
-      const borderSprite = new PIXI.Sprite(border);
-      borderSprite.anchor.set(0.5);
-      borderSprite.x = x;
-      borderSprite.y = y;
-      container.addChild(borderSprite);
     }
 
     container.x = app.screen.width / 2;
@@ -125,18 +130,77 @@ function App() {
 
           if (!banned.has([destX, destY])) {
             if (distX === 190 && distY === 0) {
-              this.x = destX;
-              this.y = destY;
+              if (destX > originX) { //Right
+                if (banned.has([originX + 95, originY])) {
+                  this.x = destX;
+                  this.y = destY;
+                  
+                  container.removeChild(master.get([originX + 95, originY]));
+                  master.set([destX, destY], this);
+                  banned.delete([originX + 95, originY]);
+                  banned.delete([originX, originY]);
+                  banned.add([destX, destY]);
+                }
+                else {
+                  this.x = originX;
+                  this.y = originY;
+                }
+              }
+              else { //Left
+                if (banned.has([originX - 95, originY])) {
+                  this.x = destX;
+                  this.y = destY;
+
+                  container.removeChild(master.get([originX - 95, originY]));
+                  master.set([destX, destY], this);
+                  banned.delete([originX - 95, originY]);
+                  banned.delete([originX, originY]);
+                  banned.add([destX, destY]);
+                }
+                else {
+                  this.x = originX;
+                  this.y = originY;
+                }
+              }
             }
             else if (distX === 0 && distY === 190) {
-              this.x = destX;
-              this.y = destY;
+              if (destY > originY) { //Down
+                if (banned.has([originX, originY + 95])) {
+                  this.x = destX;
+                  this.y = destY;
+
+                  container.removeChild(master.get([originX, originY + 95]));
+                  master.set([destX, destY], this);
+                  banned.delete([originX, originY + 95]);
+                  banned.delete([originX, originY]);
+                  banned.add([destX, destY]);
+                }
+                else {
+                  this.x = originX;
+                  this.y = originY;
+                }
+              }
+              else { //Up
+                if (banned.has([originX, originY - 95])) {
+                  this.x = destX;
+                  this.y = destY;
+
+                  container.removeChild(master.get([originX, originY - 95]));
+                  master.set([destX, destY], this);
+                  banned.delete([originX, originY - 95]);
+                  banned.delete([originX, originY]);
+                  banned.add([destX, destY]);
+                }
+                else {
+                  this.x = originX;
+                  this.y = originY;
+                }
+              }
             }
             else {
               this.x = originX;
               this.y = originY;
             }
-            //if i change x, y, need to change i too
           }
           else {
             this.x = originX;
