@@ -4,6 +4,9 @@ import './index.css';
 import * as PIXI from 'pixi.js';
 import * as FontFaceObserver from 'fontfaceobserver';
 
+PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+PIXI.settings.ROUND_PIXELS = true;
+
 class ArraySet extends Set {
   add(value) {
     super.add(value.toString());
@@ -37,7 +40,7 @@ function App() {
     width: window.innerWidth,
     height: window.innerHeight,
     backgroundColor: 0x131342,
-    resolution: window.devicePixelRatio || 1,
+    resolution: 1,
     antialias: true
   }));
 
@@ -110,19 +113,26 @@ function App() {
         align: 'center'
       });
 
-      const status = new PIXI.Text('32 of 32', style);
-      status.x = app.screen.width / 2;
-      status.y = (app.screen.height / 2) + (container.height / 2) + 95;
+      const status = new PIXI.Text('Pegs\n32 of 32', style);
+      status.x = app.screen.width / 2 + 285;
+      status.y = (app.screen.height / 2) - (container.height / 2) - 95;
       status.pivot.x = status.width / 2;
       status.pivot.y = status.height / 2;
       app.stage.addChild(status);
 
-      const timer = new PIXI.Text('3:00', style);
+      const timer = new PIXI.Text('Time\n3:00', style);
       timer.x = app.screen.width / 2;
       timer.y = (app.screen.height / 2) - (container.height / 2) - 95;
       timer.pivot.x = timer.width / 2;
       timer.pivot.y = timer.height / 2;
       app.stage.addChild(timer);
+
+      const round = new PIXI.Text('Round\n3 of 3', style);
+      round.x = app.screen.width / 2 - 285;
+      round.y = (app.screen.height / 2) - (container.height / 2) - 95;
+      round.pivot.x = round.width / 2;
+      round.pivot.y = round.height / 2;
+      app.stage.addChild(round);
 
       const a = container.getBounds();
       let originX, originY;
@@ -133,7 +143,7 @@ function App() {
         --time;
         const min = Math.floor(time / 60).toString();
         const sec = (time % 60).toString();
-        timer.text = (sec < 10) ? min + ':0' + sec : min + ':' + sec;
+        timer.text = (sec < 10) ? 'Time\n' + min + ':0' + sec : 'Time\n' + min + ':' + sec;
 
         if (time === 0) {
           clearInterval(interval);
@@ -157,6 +167,7 @@ function App() {
 
       function onDragEnd() {
         if (this.data) {
+          let moved = false;
           const b = this.getBounds();
 
           if (a.x + a.width > b.x && a.x < b.x + b.width && a.y + a.height > b.y && a.y < b.y + b.height) {
@@ -180,7 +191,8 @@ function App() {
                     banned.add([destX, destY]);
 
                     --count;
-                    status.text = count.toString() + ' of 32';
+                    status.text = (count < 10) ? 'Pegs\n0' + count.toString() + ' of 32' : 'Pegs\n' + count.toString() + ' of 32';
+                    moved = true;
                   }
                   else {
                     this.x = originX;
@@ -199,7 +211,8 @@ function App() {
                     banned.add([destX, destY]);
 
                     --count;
-                    status.text = count.toString() + ' of 32';
+                    status.text = (count < 10) ? 'Pegs\n0' + count.toString() + ' of 32' : 'Pegs\n' + count.toString() + ' of 32';
+                    moved = true;
                   }
                   else {
                     this.x = originX;
@@ -220,7 +233,8 @@ function App() {
                     banned.add([destX, destY]);
 
                     --count;
-                    status.text = count.toString() + ' of 32';
+                    status.text = (count < 10) ? 'Pegs\n0' + count.toString() + ' of 32' : 'Pegs\n' + count.toString() + ' of 32';
+                    moved = true;
                   }
                   else {
                     this.x = originX;
@@ -239,7 +253,8 @@ function App() {
                     banned.add([destX, destY]);
 
                     --count;
-                    status.text = count.toString() + ' of 32';
+                    status.text = (count < 10) ? 'Pegs\n0' + count.toString() + ' of 32' : 'Pegs\n' + count.toString() + ' of 32';
+                    moved = true;
                   }
                   else {
                     this.x = originX;
@@ -262,48 +277,64 @@ function App() {
             this.y = originY;
           }
 
-          let endGame = true;
+          if (moved) {
+            let endGame = true;
 
-          for (let value of banned) {
-            if (master.has(value)) {
-              const pos = master.get(value).position;
-              const rMid = [pos.x + 95, pos.y], rEnd = [pos.x + 190, pos.y];
-              const lMid = [pos.x - 95, pos.y], lEnd = [pos.x - 190, pos.y];
-              const uMid = [pos.x, pos.y + 95], uEnd = [pos.x, pos.y + 190];
-              const dMid = [pos.x, pos.y - 95], dEnd = [pos.x, pos.y - 190];
-              
-              if (master.has(rMid) && master.has(rEnd)) {
-                if (banned.has(rMid) && !banned.has(rEnd)) {
-                  endGame = false;
-                  break;
+            for (let value of banned) {
+              if (master.has(value)) {
+                const pos = master.get(value).position;
+                const rMid = [pos.x + 95, pos.y], rEnd = [pos.x + 190, pos.y];
+                const lMid = [pos.x - 95, pos.y], lEnd = [pos.x - 190, pos.y];
+                const uMid = [pos.x, pos.y + 95], uEnd = [pos.x, pos.y + 190];
+                const dMid = [pos.x, pos.y - 95], dEnd = [pos.x, pos.y - 190];
+                
+                if (master.has(rMid) && master.has(rEnd)) {
+                  if (banned.has(rMid) && !banned.has(rEnd)) {
+                    endGame = false;
+                    break;
+                  }
                 }
-              }
 
-              if (master.has(lMid) && master.has(lEnd)) {
-                if (banned.has(lMid) && !banned.has(lEnd)) {
-                  endGame = false;
-                  break;
+                if (master.has(lMid) && master.has(lEnd)) {
+                  if (banned.has(lMid) && !banned.has(lEnd)) {
+                    endGame = false;
+                    break;
+                  }
                 }
-              }
 
-              if (master.has(uMid) && master.has(uEnd)) {
-                if (banned.has(uMid) && !banned.has(uEnd)) {
-                  endGame = false;
-                  break;
+                if (master.has(uMid) && master.has(uEnd)) {
+                  if (banned.has(uMid) && !banned.has(uEnd)) {
+                    endGame = false;
+                    break;
+                  }
                 }
-              }
 
-              if (master.has(dMid) && master.has(dEnd)) {
-                if (banned.has(dMid) && !banned.has(dEnd)) {
-                  endGame = false;
-                  break;
+                if (master.has(dMid) && master.has(dEnd)) {
+                  if (banned.has(dMid) && !banned.has(dEnd)) {
+                    endGame = false;
+                    break;
+                  }
                 }
               }
             }
-          }
 
-          if (endGame) {
-            console.log('Game ended.');
+            if (endGame) {
+              /*container.destroy({
+                children: true,
+                texture: true,
+                baseTexture: true
+              });*/
+
+              clearInterval(interval);
+
+              const score = Math.round(((32 - count) / 31) * 100);
+              const stats = new PIXI.Text('Score\n' + score.toString() + '%', style);
+              stats.x = app.screen.width / 2;
+              stats.y = (app.screen.height / 2) + (container.height / 2) - (stats.height / 2) + 95;
+              stats.pivot.x = stats.width / 2;
+              stats.pivot.y = stats.height / 2;
+              app.stage.addChild(stats);
+            }
           }
 
           this.data = null;
