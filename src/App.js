@@ -110,7 +110,7 @@ function App() {
         align: 'center'
       });
 
-      const status = new PIXI.Text('32 OF 32', style);
+      const status = new PIXI.Text('32 of 32', style);
       status.x = app.screen.width / 2;
       status.y = (app.screen.height / 2) + (container.height / 2) + 95;
       status.pivot.x = status.width / 2;
@@ -180,7 +180,7 @@ function App() {
                     banned.add([destX, destY]);
 
                     --count;
-                    status.text = count.toString() + ' OF 32';
+                    status.text = count.toString() + ' of 32';
                   }
                   else {
                     this.x = originX;
@@ -199,7 +199,7 @@ function App() {
                     banned.add([destX, destY]);
 
                     --count;
-                    status.text = count.toString() + ' OF 32';
+                    status.text = count.toString() + ' of 32';
                   }
                   else {
                     this.x = originX;
@@ -220,7 +220,7 @@ function App() {
                     banned.add([destX, destY]);
 
                     --count;
-                    status.text = count.toString() + ' OF 32';
+                    status.text = count.toString() + ' of 32';
                   }
                   else {
                     this.x = originX;
@@ -239,7 +239,7 @@ function App() {
                     banned.add([destX, destY]);
 
                     --count;
-                    status.text = count.toString() + ' OF 32';
+                    status.text = count.toString() + ' of 32';
                   }
                   else {
                     this.x = originX;
@@ -262,6 +262,50 @@ function App() {
             this.y = originY;
           }
 
+          let endGame = true;
+
+          for (let value of banned) {
+            if (master.has(value)) {
+              const pos = master.get(value).position;
+              const rMid = [pos.x + 95, pos.y], rEnd = [pos.x + 190, pos.y];
+              const lMid = [pos.x - 95, pos.y], lEnd = [pos.x - 190, pos.y];
+              const uMid = [pos.x, pos.y + 95], uEnd = [pos.x, pos.y + 190];
+              const dMid = [pos.x, pos.y - 95], dEnd = [pos.x, pos.y - 190];
+              
+              if (master.has(rMid) && master.has(rEnd)) {
+                if (banned.has(rMid) && !banned.has(rEnd)) {
+                  endGame = false;
+                  break;
+                }
+              }
+
+              if (master.has(lMid) && master.has(lEnd)) {
+                if (banned.has(lMid) && !banned.has(lEnd)) {
+                  endGame = false;
+                  break;
+                }
+              }
+
+              if (master.has(uMid) && master.has(uEnd)) {
+                if (banned.has(uMid) && !banned.has(uEnd)) {
+                  endGame = false;
+                  break;
+                }
+              }
+
+              if (master.has(dMid) && master.has(dEnd)) {
+                if (banned.has(dMid) && !banned.has(dEnd)) {
+                  endGame = false;
+                  break;
+                }
+              }
+            }
+          }
+
+          if (endGame) {
+            console.log('Game ended.');
+          }
+
           this.data = null;
           this.alpha = 1;
         }
@@ -278,7 +322,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <div id="container" style={{ width: window.innerWidth, height: window.innerHeight, backgroundColor: "#4e214d" }} />
+        <div id="container" style={{ width: window.innerWidth, height: window.innerHeight, backgroundColor: "#131342" }} />
       </header>
     </div>
   );
