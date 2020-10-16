@@ -99,8 +99,41 @@ function App() {
     container.pivot.x = container.width / 2;
     container.pivot.y = container.height / 2;
 
+    const style = new PIXI.TextStyle({
+      fill: '#FFFFFF',
+      fontFamily: 'Arial',
+      align: 'center'
+    });
+
+    const status = new PIXI.Text('32 of 32', style);
+    status.x = app.screen.width / 2;
+    status.y = (app.screen.height / 2) + (container.height / 2) + 95;
+    status.pivot.x = status.width / 2;
+    status.pivot.y = status.height / 2;
+    app.stage.addChild(status);
+
+    const timer = new PIXI.Text('3:00', style);
+    timer.x = app.screen.width / 2;
+    timer.y = (app.screen.height / 2) - (container.height / 2) - 95;
+    timer.pivot.x = timer.width / 2;
+    timer.pivot.y = timer.height / 2;
+    app.stage.addChild(timer);
+
     const a = container.getBounds();
     let originX, originY;
+    let count = 32;
+    let time = 180;
+
+    const interval = setInterval(() => {
+      --time;
+      const min = Math.floor(time / 60).toString();
+      const sec = (time % 60).toString();
+      timer.text = (sec < 10) ? min + ':0' + sec : min + ':' + sec;
+
+      if (time === 0) {
+        clearInterval(interval);
+      }
+    }, 1000);
 
     function onDragStart(event) {
       this.data = event.data;
@@ -140,6 +173,9 @@ function App() {
                   banned.delete([originX + 95, originY]);
                   banned.delete([originX, originY]);
                   banned.add([destX, destY]);
+
+                  --count;
+                  status.text = count.toString() + ' of 32';
                 }
                 else {
                   this.x = originX;
@@ -156,6 +192,9 @@ function App() {
                   banned.delete([originX - 95, originY]);
                   banned.delete([originX, originY]);
                   banned.add([destX, destY]);
+
+                  --count;
+                  status.text = count.toString() + ' of 32';
                 }
                 else {
                   this.x = originX;
@@ -174,6 +213,9 @@ function App() {
                   banned.delete([originX, originY + 95]);
                   banned.delete([originX, originY]);
                   banned.add([destX, destY]);
+
+                  --count;
+                  status.text = count.toString() + ' of 32';
                 }
                 else {
                   this.x = originX;
@@ -190,6 +232,9 @@ function App() {
                   banned.delete([originX, originY - 95]);
                   banned.delete([originX, originY]);
                   banned.add([destX, destY]);
+
+                  --count;
+                  status.text = count.toString() + ' of 32';
                 }
                 else {
                   this.x = originX;
