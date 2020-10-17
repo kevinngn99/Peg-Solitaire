@@ -9,21 +9,17 @@ PIXI.settings.ROUND_PIXELS = true;
 
 class ArraySet extends Set {
   add(value) {
-    super.add(value.toString());
+    return super.add(value.toString());
   }
 
   has(value) {
     return super.has(value.toString());
   }
-
-  delete(value) {
-    super.delete(value.toString());
-  }
 }
 
 class ArrayMap extends Map {
   set(key, value) {
-    super.set(key.toString(), value);
+    return super.set(key.toString(), value);
   }
 
   has(key) {
@@ -32,6 +28,10 @@ class ArrayMap extends Map {
 
   get(key) {
     return super.get(key.toString());
+  }
+
+  delete(key) {
+    return super.delete(key.toString());
   }
 }
 
@@ -56,24 +56,28 @@ function App() {
 
       app.stage.addChild(container);
 
-      const centerSprite = new PIXI.Sprite(empty);
-      centerSprite.anchor.set(0.5);
-      centerSprite.x = (24 % 7) * 95;
-      centerSprite.y = Math.floor(24 / 7) * 95;
-      container.addChild(centerSprite);
+      /*
+            02 03 04
+            09 10 11
+      14 15 16 17 18 19 20
+      21 22 23 24 25 26 27
+      28 29 30 31 32 33 34
+            37 38 39
+            44 45 46
+      */
 
-      let banned = new ArraySet();
-      let master = new ArrayMap();
+      let cross = new ArraySet();
+      let current = new ArrayMap();
       const corners = [0, 1, 5, 6, 7, 8, 12, 13, 35, 36, 40, 41, 42, 43, 47, 48];
+      //const pegs = [2, 3, 4, 9, 10, 11, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 37, 38, 39, 44, 45, 46];
+      const pegs = [10, 16, 22, 18, 25];
 
       for (let i = 0; i < 49; ++i) {
-        if (i !== 24) {
-          const x = (i % 7) * 95;
-          const y = Math.floor(i / 7) * 95;
+        const x = (i % 7) * 95;
+        const y = Math.floor(i / 7) * 95;
 
-          banned.add([x, y]);
-    
-          if (!corners.includes(i)) {
+        if (!corners.includes(i)) {
+          if (pegs.includes(i)) {
             const pegSprite = new PIXI.Sprite(peg);
             pegSprite.anchor.set(0.5);
             pegSprite.x = x;
@@ -91,14 +95,16 @@ function App() {
               .on('touchendoutside', onDragEnd);
             container.addChild(pegSprite);
     
-            master.set([x, y], pegSprite);
-    
-            const emptySprite = new PIXI.Sprite(empty);
-            emptySprite.anchor.set(0.5);
-            emptySprite.x = x;
-            emptySprite.y = y;
-            container.addChild(emptySprite);
+            current.set([x, y], pegSprite);
           }
+
+          cross.add([x, y]);
+
+          const emptySprite = new PIXI.Sprite(empty);
+          emptySprite.anchor.set(0.5);
+          emptySprite.x = x;
+          emptySprite.y = y;
+          container.addChild(emptySprite);
         }
       }
 
@@ -113,7 +119,7 @@ function App() {
         align: 'center'
       });
 
-      const status = new PIXI.Text('Pegs\n32 of 32', style);
+      const status = new PIXI.Text('Pegs\n' + pegs.length.toString() + ' of ' + pegs.length.toString(), style);
       status.x = app.screen.width / 2 + 285;
       status.y = (app.screen.height / 2) - (container.height / 2) - 95;
       status.pivot.x = status.width / 2;
@@ -134,9 +140,8 @@ function App() {
       round.pivot.y = round.height / 2;
       app.stage.addChild(round);
 
-      const a = container.getBounds();
       let originX, originY;
-      let count = 32;
+      let count = pegs.length;
       let time = 180;
 
       const interval = setInterval(() => {
@@ -168,103 +173,92 @@ function App() {
       function onDragEnd() {
         if (this.data) {
           let moved = false;
-          const b = this.getBounds();
 
-          if (a.x + a.width > b.x && a.x < b.x + b.width && a.y + a.height > b.y && a.y < b.y + b.height) {
-            const destX = Math.abs(Math.round(this.x / 95) * 95);
-            const destY = Math.abs(Math.round(this.y / 95) * 95);
+          const destX = Math.abs(Math.round(this.x / 95) * 95);
+          const destY = Math.abs(Math.round(this.y / 95) * 95);
 
-            const distX = Math.abs(destX - originX);
-            const distY = Math.abs(destY - originY);
+          const distX = Math.abs(destX - originX);
+          const distY = Math.abs(destY - originY);
 
-            if (!banned.has([destX, destY])) {
-              if (distX === 190 && distY === 0) {
-                if (destX > originX) { //Right
-                  if (banned.has([originX + 95, originY])) {
-                    this.x = destX;
-                    this.y = destY;
-                    
-                    container.removeChild(master.get([originX + 95, originY]));
-                    master.set([destX, destY], this);
-                    banned.delete([originX + 95, originY]);
-                    banned.delete([originX, originY]);
-                    banned.add([destX, destY]);
+          if (cross.has([destX, destY])) {
+            if (distX === 190 && distY === 0) { //Horizontal
+              if (destX > originX) { //Right
+                if (current.has([originX + 95, originY]) && !current.has([destX, destY])) {
+                  this.x = destX;
+                  this.y = destY;
+                  
+                  container.removeChild(current.get([originX + 95, originY]));
+                  current.delete([originX, originY]);
+                  current.delete([originX + 95, originY]);
+                  current.set([destX, destY], this);
 
-                    --count;
-                    status.text = (count < 10) ? 'Pegs\n0' + count.toString() + ' of 32' : 'Pegs\n' + count.toString() + ' of 32';
-                    moved = true;
-                  }
-                  else {
-                    this.x = originX;
-                    this.y = originY;
-                  }
+                  --count;
+                  status.text = (count < 10) ? 'Pegs\n0' + count.toString() + ' of ' + pegs.length.toString() : 'Pegs\n' + count.toString() + ' of ' + pegs.length.toString();
+                  moved = true;
                 }
-                else { //Left
-                  if (banned.has([originX - 95, originY])) {
-                    this.x = destX;
-                    this.y = destY;
-
-                    container.removeChild(master.get([originX - 95, originY]));
-                    master.set([destX, destY], this);
-                    banned.delete([originX - 95, originY]);
-                    banned.delete([originX, originY]);
-                    banned.add([destX, destY]);
-
-                    --count;
-                    status.text = (count < 10) ? 'Pegs\n0' + count.toString() + ' of 32' : 'Pegs\n' + count.toString() + ' of 32';
-                    moved = true;
-                  }
-                  else {
-                    this.x = originX;
-                    this.y = originY;
-                  }
+                else {
+                  this.x = originX;
+                  this.y = originY;
                 }
               }
-              else if (distX === 0 && distY === 190) {
-                if (destY > originY) { //Down
-                  if (banned.has([originX, originY + 95])) {
-                    this.x = destX;
-                    this.y = destY;
+              else { //Left
+                if (current.has([originX - 95, originY]) && !current.has([destX, destY])) {
+                  this.x = destX;
+                  this.y = destY;
 
-                    container.removeChild(master.get([originX, originY + 95]));
-                    master.set([destX, destY], this);
-                    banned.delete([originX, originY + 95]);
-                    banned.delete([originX, originY]);
-                    banned.add([destX, destY]);
+                  container.removeChild(current.get([originX - 95, originY]));
+                  current.delete([originX, originY]);
+                  current.delete([originX - 95, originY]);
+                  current.set([destX, destY], this);
 
-                    --count;
-                    status.text = (count < 10) ? 'Pegs\n0' + count.toString() + ' of 32' : 'Pegs\n' + count.toString() + ' of 32';
-                    moved = true;
-                  }
-                  else {
-                    this.x = originX;
-                    this.y = originY;
-                  }
+                  --count;
+                  status.text = (count < 10) ? 'Pegs\n0' + count.toString() + ' of ' + pegs.length.toString() : 'Pegs\n' + count.toString() + ' of ' + pegs.length.toString();
+                  moved = true;
                 }
-                else { //Up
-                  if (banned.has([originX, originY - 95])) {
-                    this.x = destX;
-                    this.y = destY;
-
-                    container.removeChild(master.get([originX, originY - 95]));
-                    master.set([destX, destY], this);
-                    banned.delete([originX, originY - 95]);
-                    banned.delete([originX, originY]);
-                    banned.add([destX, destY]);
-
-                    --count;
-                    status.text = (count < 10) ? 'Pegs\n0' + count.toString() + ' of 32' : 'Pegs\n' + count.toString() + ' of 32';
-                    moved = true;
-                  }
-                  else {
-                    this.x = originX;
-                    this.y = originY;
-                  }
+                else {
+                  this.x = originX;
+                  this.y = originY;
                 }
               }
-              else {
-                this.x = originX;
-                this.y = originY;
+            }
+            else if (distX === 0 && distY === 190) { //Vertical
+              if (destY > originY) { //Up
+                if (current.has([originX, originY + 95]) && !current.has([destX, destY])) {
+                  this.x = destX;
+                  this.y = destY;
+
+                  container.removeChild(current.get([originX, originY + 95]));
+                  current.delete([originX, originY]);
+                  current.delete([originX, originY + 95]);
+                  current.set([destX, destY], this);
+
+                  --count;
+                  status.text = (count < 10) ? 'Pegs\n0' + count.toString() + ' of ' + pegs.length.toString() : 'Pegs\n' + count.toString() + ' of ' + pegs.length.toString();
+                  moved = true;
+                }
+                else {
+                  this.x = originX;
+                  this.y = originY;
+                }
+              }
+              else { //Down
+                if (current.has([originX, originY - 95]) && !current.has([destX, destY])) {
+                  this.x = destX;
+                  this.y = destY;
+
+                  container.removeChild(current.get([originX, originY - 95]));
+                  current.delete([originX, originY]);
+                  current.delete([originX, originY - 95]);
+                  current.set([destX, destY], this);
+
+                  --count;
+                  status.text = (count < 10) ? 'Pegs\n0' + count.toString() + ' of ' + pegs.length.toString() : 'Pegs\n' + count.toString() + ' of ' + pegs.length.toString();
+                  moved = true;
+                }
+                else {
+                  this.x = originX;
+                  this.y = originY;
+                }
               }
             }
             else {
@@ -280,40 +274,38 @@ function App() {
           if (moved) {
             let endGame = true;
 
-            for (let value of banned) {
-              if (master.has(value)) {
-                const pos = master.get(value).position;
-                const rMid = [pos.x + 95, pos.y], rEnd = [pos.x + 190, pos.y];
-                const lMid = [pos.x - 95, pos.y], lEnd = [pos.x - 190, pos.y];
-                const uMid = [pos.x, pos.y + 95], uEnd = [pos.x, pos.y + 190];
-                const dMid = [pos.x, pos.y - 95], dEnd = [pos.x, pos.y - 190];
-                
-                if (master.has(rMid) && master.has(rEnd)) {
-                  if (banned.has(rMid) && !banned.has(rEnd)) {
-                    endGame = false;
-                    break;
-                  }
+            for (let [key, value] of current) {
+              const pos = value.position;
+              const rMid = [pos.x + 95, pos.y], rEnd = [pos.x + 190, pos.y];
+              const lMid = [pos.x - 95, pos.y], lEnd = [pos.x - 190, pos.y];
+              const uMid = [pos.x, pos.y + 95], uEnd = [pos.x, pos.y + 190];
+              const dMid = [pos.x, pos.y - 95], dEnd = [pos.x, pos.y - 190];
+              
+              if (cross.has(rMid) && cross.has(rEnd)) {
+                if (current.has(rMid) && !current.has(rEnd)) {
+                  endGame = false;
+                  break;
                 }
+              }
 
-                if (master.has(lMid) && master.has(lEnd)) {
-                  if (banned.has(lMid) && !banned.has(lEnd)) {
-                    endGame = false;
-                    break;
-                  }
+              if (cross.has(lMid) && cross.has(lEnd)) {
+                if (current.has(lMid) && !current.has(lEnd)) {
+                  endGame = false;
+                  break;
                 }
+              }
 
-                if (master.has(uMid) && master.has(uEnd)) {
-                  if (banned.has(uMid) && !banned.has(uEnd)) {
-                    endGame = false;
-                    break;
-                  }
+              if (cross.has(uMid) && cross.has(uEnd)) {
+                if (current.has(uMid) && !current.has(uEnd)) {
+                  endGame = false;
+                  break;
                 }
+              }
 
-                if (master.has(dMid) && master.has(dEnd)) {
-                  if (banned.has(dMid) && !banned.has(dEnd)) {
-                    endGame = false;
-                    break;
-                  }
+              if (cross.has(dMid) && cross.has(dEnd)) {
+                if (current.has(dMid) && !current.has(dEnd)) {
+                  endGame = false;
+                  break;
                 }
               }
             }
@@ -327,7 +319,7 @@ function App() {
 
               clearInterval(interval);
 
-              const score = Math.round(((32 - count) / 31) * 100);
+              const score = Math.round(((pegs.length - count) / (pegs.length - 1)) * 100);
               const stats = new PIXI.Text('Score\n' + score.toString() + '%', style);
               stats.x = app.screen.width / 2;
               stats.y = (app.screen.height / 2) + (container.height / 2) - (stats.height / 2) + 95;
