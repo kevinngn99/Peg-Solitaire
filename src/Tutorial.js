@@ -4,7 +4,6 @@ import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Carousel from 'react-bootstrap/Carousel';
 import Card from 'react-bootstrap/Card';
-import CardDeck from 'react-bootstrap/CardDeck';
 
 function ItemCard(props) {
     return (
@@ -29,7 +28,7 @@ function Tutorial() {
         <div className="Tutorial">
             <header className="Tutorial-header">
                 <div id="container" style={{ width: window.innerWidth, margin: 'auto'}} >
-                    <Carousel style={{ width: 500, height: 500, margin: 'auto'}}>
+                    <Carousel interval={null} style={{ width: 500, height: 500, margin: 'auto'}}>
                         <Carousel.Item>
                             <ItemCard title='Card 1'/>
                         </Carousel.Item>

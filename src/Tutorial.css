@@ -1,19 +1,19 @@
 .Tutorial {
     text-align: center;
-  }
+}
   
-  .Tutorial-logo {
+.Tutorial-logo {
     height: 40vmin;
     pointer-events: none;
-  }
+}
   
-  @media (prefers-reduced-motion: no-preference) {
+@media (prefers-reduced-motion: no-preference) {
     .Tutorial-logo {
-      animation: Tutorial-logo-spin infinite 20s linear;
+        animation: Tutorial-logo-spin infinite 20s linear;
     }
-  }
+}
   
-  .Tutorial-header {
+.Tutorial-header {
     background-color: #282c34;
     min-height: 100vh;
     display: flex;
@@ -22,18 +22,26 @@
     justify-content: center;
     font-size: calc(10px + 2vmin);
     color: white;
-  }
+}
   
-  .Tutorial-link {
+.Tutorial-link {
     color: #61dafb;
-  }
+}
   
-  @keyframes Tutorial-logo-spin {
+@keyframes Tutorial-logo-spin {
     from {
-      transform: rotate(0deg);
+        transform: rotate(0deg);
     }
     to {
-      transform: rotate(360deg);
+        transform: rotate(360deg);
     }
-  }
+}
+
+.carousel-indicators > li {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+@import '~bootstrap/dist/css/bootstrap.min.css';
   
