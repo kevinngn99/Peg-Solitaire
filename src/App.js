@@ -44,11 +44,15 @@ function App() {
     antialias: true
   }));
 
+  const [level, setLevel] = useState(1);
+
   useEffect(() => {
     const font = new FontFaceObserver('DMSans');
   
     font.load().then(function () {
-      document.getElementById('container').appendChild(app.view);
+      if (document.getElementById('container').children.length === 0) {
+        document.getElementById('container').appendChild(app.view);
+      }
 
       const container = new PIXI.Container();
       const empty = PIXI.Texture.from('./empty.png');
@@ -69,8 +73,17 @@ function App() {
       let cross = new ArraySet();
       let current = new ArrayMap();
       const corners = [0, 1, 5, 6, 7, 8, 12, 13, 35, 36, 40, 41, 42, 43, 47, 48];
-      //const pegs = [2, 3, 4, 9, 10, 11, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 37, 38, 39, 44, 45, 46];
-      const pegs = [10, 16, 22, 18, 25];
+      let pegs;
+      
+      if (level === 1) {
+        pegs = [10, 16, 22, 18, 25];
+      }
+      else if (level === 2) {
+        pegs = [10, 16, 18, 22, 24, 26, 30, 32, 38, 45];
+      }
+      else {
+        pegs = [2, 3, 4, 9, 10, 11, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 37, 38, 39, 44, 45, 46];
+      }
 
       for (let i = 0; i < 49; ++i) {
         const x = (i % 7) * 95;
@@ -110,8 +123,8 @@ function App() {
 
       container.x = app.screen.width / 2;
       container.y = app.screen.height / 2;
-      container.pivot.x = container.width / 2;
-      container.pivot.y = container.height / 2;
+      container.pivot.x = 570 / 2;
+      container.pivot.y = 570 / 2;
 
       const style = new PIXI.TextStyle({
         fill: '#FFFFFF',
@@ -120,25 +133,22 @@ function App() {
       });
 
       const status = new PIXI.Text('Pegs\n' + pegs.length.toString() + ' of ' + pegs.length.toString(), style);
-      status.x = app.screen.width / 2 + 285;
-      status.y = (app.screen.height / 2) - (container.height / 2) - 95;
-      status.pivot.x = status.width / 2;
-      status.pivot.y = status.height / 2;
-      app.stage.addChild(status);
+      status.anchor.set(0.5);
+      status.x = 570;
+      status.y = -95;
+      container.addChild(status);
 
       const timer = new PIXI.Text('Time\n3:00', style);
-      timer.x = app.screen.width / 2;
-      timer.y = (app.screen.height / 2) - (container.height / 2) - 95;
-      timer.pivot.x = timer.width / 2;
-      timer.pivot.y = timer.height / 2;
-      app.stage.addChild(timer);
+      timer.anchor.set(0.5);
+      timer.x = 285;
+      timer.y = -95;
+      container.addChild(timer);
 
-      const round = new PIXI.Text('Round\n3 of 3', style);
-      round.x = app.screen.width / 2 - 285;
-      round.y = (app.screen.height / 2) - (container.height / 2) - 95;
-      round.pivot.x = round.width / 2;
-      round.pivot.y = round.height / 2;
-      app.stage.addChild(round);
+      const round = new PIXI.Text('Round\n' + level + ' of 3', style);
+      round.anchor.set(0.5);
+      round.x = 0;
+      round.y = -95;
+      container.addChild(round);
 
       let originX, originY;
       let count = pegs.length;
@@ -311,21 +321,27 @@ function App() {
             }
 
             if (endGame) {
-              /*container.destroy({
-                children: true,
-                texture: true,
-                baseTexture: true
-              });*/
-
               clearInterval(interval);
 
               const score = Math.round(((pegs.length - count) / (pegs.length - 1)) * 100);
               const stats = new PIXI.Text('Score\n' + score.toString() + '%', style);
-              stats.x = app.screen.width / 2;
-              stats.y = (app.screen.height / 2) + (container.height / 2) - (stats.height / 2) + 95;
-              stats.pivot.x = stats.width / 2;
-              stats.pivot.y = stats.height / 2;
-              app.stage.addChild(stats);
+              stats.anchor.set(0.5);
+              stats.x = 285;
+              stats.y = 665;
+              container.addChild(stats);
+
+              const next = new PIXI.Text('Continue', style);
+              next.anchor.set(0.5);
+              next.x = 570;
+              next.y = 665;
+              next.interactive = true;
+              next.buttonMode = true;
+              next
+                .on('mousedown', onNextStart)
+                .on('mouseup', onNextEnd)
+                .on('touchstart', onNextStart)
+                .on('touchend', onNextEnd)
+                container.addChild(next);
             }
           }
 
@@ -334,13 +350,29 @@ function App() {
         }
       }
 
+      function onNextStart() {
+        this.alpha = 0.5;
+      }
+
+      function onNextEnd() {
+        this.alpha = 1;
+
+        container.destroy({
+          children: true,
+          texture: true,
+          baseTexture: true
+        });
+
+        setLevel(level + 1);
+      }
+
       return () => {
         app.stop();
       }
     }).catch(function () {
       
     });
-  }, [app]);
+  }, [app, level]);
 
   return (
     <div className="App">
