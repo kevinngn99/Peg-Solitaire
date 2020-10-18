@@ -192,7 +192,7 @@ function App() {
                     current.set([destX, destY], this);
 
                     --count;
-                    status.text = (count < 10) ? 'Pegs\n0' + count.toString() + ' of ' + pegs.length.toString() : 'Pegs\n' + count.toString() + ' of ' + pegs.length.toString();
+                    status.text = 'Pegs\n' + count.toString() + ' of ' + pegs.length.toString();
                     moved = true;
                   }
                   else {
@@ -211,7 +211,7 @@ function App() {
                     current.set([destX, destY], this);
 
                     --count;
-                    status.text = (count < 10) ? 'Pegs\n0' + count.toString() + ' of ' + pegs.length.toString() : 'Pegs\n' + count.toString() + ' of ' + pegs.length.toString();
+                    status.text = 'Pegs\n' + count.toString() + ' of ' + pegs.length.toString();
                     moved = true;
                   }
                   else {
@@ -232,7 +232,7 @@ function App() {
                     current.set([destX, destY], this);
 
                     --count;
-                    status.text = (count < 10) ? 'Pegs\n0' + count.toString() + ' of ' + pegs.length.toString() : 'Pegs\n' + count.toString() + ' of ' + pegs.length.toString();
+                    status.text = 'Pegs\n' + count.toString() + ' of ' + pegs.length.toString();
                     moved = true;
                   }
                   else {
@@ -251,7 +251,7 @@ function App() {
                     current.set([destX, destY], this);
 
                     --count;
-                    status.text = (count < 10) ? 'Pegs\n0' + count.toString() + ' of ' + pegs.length.toString() : 'Pegs\n' + count.toString() + ' of ' + pegs.length.toString();
+                    status.text = 'Pegs\n' + count.toString() + ' of ' + pegs.length.toString();
                     moved = true;
                   }
                   else {
