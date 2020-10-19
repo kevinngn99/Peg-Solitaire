@@ -162,18 +162,20 @@ function App() {
             stats.y = 665;
             container.addChild(stats);
 
-            const next = new PIXI.Text('Continue', style);
-            next.anchor.set(0.5);
-            next.x = 570;
-            next.y = 665;
-            next.interactive = true;
-            next.buttonMode = true;
-            next
-              .on('mousedown', onNextStart)
-              .on('mouseup', onNextEnd)
-              .on('touchstart', onNextStart)
-              .on('touchend', onNextEnd)
-              container.addChild(next);
+            if (level != 3) {
+              const next = new PIXI.Text('Continue', style);
+              next.anchor.set(0.5);
+              next.x = 570;
+              next.y = 665;
+              next.interactive = true;
+              next.buttonMode = true;
+              next
+                .on('mousedown', onNextStart)
+                .on('mouseup', onNextEnd)
+                .on('touchstart', onNextStart)
+                .on('touchend', onNextEnd)
+                container.addChild(next);
+            }
 
             for (let [pos, sprite] of current) {
               sprite.interactive = false;
@@ -346,18 +348,20 @@ function App() {
                 stats.y = 665;
                 container.addChild(stats);
 
-                const next = new PIXI.Text('Continue', style);
-                next.anchor.set(0.5);
-                next.x = 570;
-                next.y = 665;
-                next.interactive = true;
-                next.buttonMode = true;
-                next
-                  .on('mousedown', onNextStart)
-                  .on('mouseup', onNextEnd)
-                  .on('touchstart', onNextStart)
-                  .on('touchend', onNextEnd)
-                  container.addChild(next);
+                if (level != 3) {
+                  const next = new PIXI.Text('Continue', style);
+                  next.anchor.set(0.5);
+                  next.x = 570;
+                  next.y = 665;
+                  next.interactive = true;
+                  next.buttonMode = true;
+                  next
+                    .on('mousedown', onNextStart)
+                    .on('mouseup', onNextEnd)
+                    .on('touchstart', onNextStart)
+                    .on('touchend', onNextEnd)
+                    container.addChild(next);
+                }
 
                 for (let [pos, sprite] of current) {
                   sprite.interactive = false;
