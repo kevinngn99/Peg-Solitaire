@@ -15,11 +15,10 @@
     "react-scripts": "3.4.3"
   },
   "scripts": {
-    "client": "cd client && npm start",
-    "server": "nodemon server/server.js",
-    "build": "cd client && npm build",
-    "start": "node server/server.js",
-    "heroku-postbuild": "cd client && npm install && npm install --only=dev --no-shrinkwrap && npm run build"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"
