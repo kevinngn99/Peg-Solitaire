@@ -1,48 +1,75 @@
-import React from 'react';
+import React, { useState} from 'react';
 import './Tutorial.css';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import App from './App';
 import Carousel from 'react-bootstrap/Carousel';
 import Card from 'react-bootstrap/Card';
-
-function ItemCard(props) {
-    return (
-        <Card style={{ width: 330, margin: 'auto' }} >
-            <Card.Img variant="top" src="./img.svg" />
-            <Card.Body>
-                <Card.Title style={{ color: '#212529', fontSize: 20 }}> {props.title} </Card.Title>
-                <Card.Text style={{ color: '#212529', fontSize: 16, textAlign: 'left' }}>
-                    This is a wider card with supporting text below as a natural lead-in to additional content.
-                    This card has even longer content than the first to show that equal height action.
-                </Card.Text>
-            </Card.Body>
-            <Card.Footer style={{ color: '#6c757d', fontSize: 16 }}>
-                <small className="text-muted">Last updated 3 mins ago</small>
-            </Card.Footer>
-        </Card>
-    );
-}
+import Button from 'react-bootstrap/Button';
 
 function Tutorial() {
-    return (
-        <div className="Tutorial">
-            <header className="Tutorial-header">
-                <div id="container" style={{ width: window.innerWidth, margin: 'auto'}} >
-                    <Carousel interval={null} style={{ width: 500, height: 500, margin: 'auto'}}>
-                        <Carousel.Item>
-                            <ItemCard title='Card 1'/>
-                        </Carousel.Item>
-                        <Carousel.Item>
-                            <ItemCard title='Card 2'/>
-                        </Carousel.Item>
-                        <Carousel.Item>
-                            <ItemCard title='Card 3'/>
-                        </Carousel.Item>
-                    </Carousel>
-                </div>
-            </header>
-        </div>
-    );
+    const [start, setStart] = useState(false);
+
+    function ItemCard(props) {
+        const onclick = () => {
+            setStart(true);
+        }
+    
+        return (
+            <Card style={{ width: 330, margin: 'auto' }} >
+                <Card.Img variant="top" src="./img.svg" />
+                <Card.Body>
+                    <Card.Title style={{ color: '#212529', fontSize: 20, fontFamily: 'DMSans', fontWeight: 'bold'}}> {props.title} </Card.Title>
+                    <Card.Text style={{ color: '#212529', fontSize: 16, fontFamily: 'DMSans', fontWeight: 'normal', textAlign: 'left' }}>
+                        {!props.button ? props.content : <div> <p>{props.content}</p> {<Button onClick={onclick} variant="primary">Begin Game!</Button>} </div>}
+                    </Card.Text>
+                </Card.Body>
+                <Card.Footer style={{ color: '#6c757d', fontSize: 16, fontFamily: 'DMSans', fontWeight: 'normal' }}>
+                    <small className="text-muted"> Card {props.item} of 3 </small>
+                </Card.Footer>
+            </Card>
+        );
+    }
+
+    if (start) {
+        return (
+            <App />
+        );
+    }
+    else {
+        return (
+            <div className="Tutorial">
+                <header className="Tutorial-header">
+                    <div id="container" style={{ width: window.innerWidth, margin: 'auto'}} >
+                        <Carousel interval={null} style={{ width: 500, height: 500, margin: 'auto'}}>
+                            <Carousel.Item>
+                                <ItemCard button={false} title='How do I Play?' item='1'
+                                    content='The rules of peg solitaire are simple.
+                                    You are allowed to jump over pegs horizontally or vertically.
+                                    But you can only jump over a peg into a hole that is two positions away.
+                                    That&apos;s it!'
+                                />
+                            </Carousel.Item>
+                            <Carousel.Item>
+                                <ItemCard button={false} title='What to Expect?' item='2'
+                                    content='There will be 3 rounds.
+                                    Each round increases in difficulty.
+                                    There is a time limit of 3 minutes.
+                                    If you go over time, the game is stopped.'
+                                />
+                            </Carousel.Item>
+                            <Carousel.Item>
+                                <ItemCard button={true} title='Are You Ready?' item='3'
+                                    content='Review the cards again if you are uncertain of the rules.
+                                    Otherwise, click the button below to begin the game!'
+                                />
+                            </Carousel.Item>
+                        </Carousel>
+                    </div>
+                </header>
+            </div>
+        );
+    }
 }
 
 export default Tutorial;
