@@ -162,7 +162,7 @@ function App() {
             stats.y = 665;
             container.addChild(stats);
 
-            if (level != 3) {
+            if (level !== 3) {
               const next = new PIXI.Text('Continue', style);
               next.anchor.set(0.5);
               next.x = 570;
@@ -348,7 +348,7 @@ function App() {
                 stats.y = 665;
                 container.addChild(stats);
 
-                if (level != 3) {
+                if (level !== 3) {
                   const next = new PIXI.Text('Continue', style);
                   next.anchor.set(0.5);
                   next.x = 570;
