@@ -154,6 +154,30 @@ function App() {
 
           if (time === 0) {
             clearInterval(interval);
+
+            const score = Math.round(((pegs.length - count) / (pegs.length - 1)) * 100);
+            const stats = new PIXI.Text('Score\n' + score.toString() + '%', style);
+            stats.anchor.set(0.5);
+            stats.x = 285;
+            stats.y = 665;
+            container.addChild(stats);
+
+            const next = new PIXI.Text('Continue', style);
+            next.anchor.set(0.5);
+            next.x = 570;
+            next.y = 665;
+            next.interactive = true;
+            next.buttonMode = true;
+            next
+              .on('mousedown', onNextStart)
+              .on('mouseup', onNextEnd)
+              .on('touchstart', onNextStart)
+              .on('touchend', onNextEnd)
+              container.addChild(next);
+
+            for (let [pos, sprite] of current) {
+              sprite.interactive = false;
+            }
           }
         }, 1000);
 
@@ -334,6 +358,10 @@ function App() {
                   .on('touchstart', onNextStart)
                   .on('touchend', onNextEnd)
                   container.addChild(next);
+
+                for (let [pos, sprite] of current) {
+                  sprite.interactive = false;
+                }
               }
             }
 
