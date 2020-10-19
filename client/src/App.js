@@ -58,8 +58,10 @@ function App() {
         const container = new PIXI.Container();
         app.stage.addChild(container);
 
-        const empty = PIXI.Texture.from('./empty.png');
-        const peg = PIXI.Texture.from('./peg.png');
+        const empty = PIXI.Texture.from('./hole.svg');
+        empty.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
+        const peg = PIXI.Texture.from('./peg.svg');
+        peg.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
         
         let cross = new ArraySet();
         let current = new ArrayMap();
@@ -117,6 +119,13 @@ function App() {
         container.pivot.x = 570 / 2;
         container.pivot.y = 570 / 2;
 
+        const wi = 1920;
+        const hi = 1080;
+        const ws = window.screen.width;
+        const hs = window.screen.height;
+        const ratio = Math.min((wi / ws), (hi / hs));
+        container.scale.set(1 / ratio);
+
         const style = new PIXI.TextStyle({
           fill: '#FFFFFF',
           fontFamily: 'DMSans',
@@ -128,18 +137,21 @@ function App() {
         status.anchor.set(0.5);
         status.x = 570;
         status.y = -95;
+        status.texture.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
         container.addChild(status);
 
         const timer = new PIXI.Text('Time\n3:00', style);
         timer.anchor.set(0.5);
         timer.x = 285;
         timer.y = -95;
+        timer.texture.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
         container.addChild(timer);
 
         const round = new PIXI.Text('Round\n' + level + ' of 3', style);
         round.anchor.set(0.5);
         round.x = 0;
         round.y = -95;
+        round.texture.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
         container.addChild(round);
 
         let originX, originY;
@@ -160,6 +172,7 @@ function App() {
             stats.anchor.set(0.5);
             stats.x = 285;
             stats.y = 665;
+            stats.texture.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
             container.addChild(stats);
 
             if (level !== 3) {
@@ -167,6 +180,7 @@ function App() {
               next.anchor.set(0.5);
               next.x = 570;
               next.y = 665;
+              next.texture.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
               next.interactive = true;
               next.buttonMode = true;
               next
@@ -346,6 +360,7 @@ function App() {
                 stats.anchor.set(0.5);
                 stats.x = 285;
                 stats.y = 665;
+                stats.texture.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
                 container.addChild(stats);
 
                 if (level !== 3) {
@@ -353,6 +368,7 @@ function App() {
                   next.anchor.set(0.5);
                   next.x = 570;
                   next.y = 665;
+                  next.texture.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
                   next.interactive = true;
                   next.buttonMode = true;
                   next
