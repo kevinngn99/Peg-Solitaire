@@ -36,9 +36,16 @@ class ArrayMap extends Map {
 }
 
 function App() {
+  const wi = 1920;
+  const hi = 1080;
+  const ws = window.screen.width;
+  const hs = window.screen.height;
+  const ratio = Math.min((wi / ws), (hi / hs));
+  const scale = 1 / ratio;
+
   const [app, setApp] = useState(new PIXI.Application({ 
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: window.innerWidth * ratio,
+    height: window.innerHeight * ratio,
     backgroundColor: 0x131342,
     resolution: 1,
     antialias: true
@@ -60,7 +67,7 @@ function App() {
 
         const empty = PIXI.Texture.from('./hole.svg');
         empty.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
-        const peg = PIXI.Texture.from('./peg.svg');
+        const peg = PIXI.Texture.from('./peg.png');
         peg.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
         
         let cross = new ArraySet();
@@ -118,13 +125,6 @@ function App() {
         container.y = app.screen.height / 2;
         container.pivot.x = 570 / 2;
         container.pivot.y = 570 / 2;
-
-        const wi = 1920;
-        const hi = 1080;
-        const ws = window.screen.width;
-        const hs = window.screen.height;
-        const ratio = Math.min((wi / ws), (hi / hs));
-        container.scale.set(1 / ratio);
 
         const style = new PIXI.TextStyle({
           fill: '#FFFFFF',
@@ -425,11 +425,7 @@ function App() {
   }, [app]);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <div id="container" style={{ width: window.innerWidth, height: window.innerHeight, backgroundColor: "#131342" }} />
-      </header>
-    </div>
+    <div id="container" style={{ transform: `scale(${scale})`, transformOrigin: `0 0`, width: `${100 * (1 / scale)}%`, height: window.innerHeight, backgroundColor: "#131342" }} />
   );
 }
 

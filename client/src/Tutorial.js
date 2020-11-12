@@ -8,6 +8,12 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 
 function Tutorial() {
+    const wi = 1920;
+    const hi = 1080;
+    const ws = window.screen.width;
+    const hs = window.screen.height;
+    const ratio = Math.min((wi / ws), (hi / hs));
+    const scale = 1 / ratio;
     const [start, setStart] = useState(false);
 
     function ItemCard(props) {
@@ -40,7 +46,7 @@ function Tutorial() {
         return (
             <div className="Tutorial">
                 <header className="Tutorial-header">
-                    <div id="container" style={{ width: window.innerWidth, margin: 'auto'}} >
+                    <div id="container" style={{ zoom: scale, width: window.innerWidth, margin: 'auto'}} >
                         <Carousel interval={null} style={{ width: 500, height: 500, margin: 'auto'}}>
                             <Carousel.Item>
                                 <ItemCard image='./example.gif' button={false} title='How to Play?' item='1'
