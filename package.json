@@ -16,7 +16,7 @@
   },
   "scripts": {
     "start": "node server/server.js",
-    "heroku-postbuild": "cd client && react-scripts build"
+    "heroku-postbuild": "cd client && npm install && react-scripts build"
   },
   "eslintConfig": {
     "extends": "react-app"
