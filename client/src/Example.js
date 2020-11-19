@@ -34,8 +34,8 @@ class ArraySet extends Set {
 
 function Example() {
     const [app, setApp] = useState(new PIXI.Application({
-        width: window.innerWidth,
-        height: window.innerHeight,
+        width: 1848,
+        height: 973,
         backgroundColor: 0x131342,
         resolution: 1,
         antialias: true
@@ -47,8 +47,9 @@ function Example() {
         const container = new PIXI.Container();
         app.stage.addChild(container);
 
-        const empty = PIXI.Texture.from('./tut_e.svg');
-        const peg = PIXI.Texture.from('./tut.svg');
+        const empty = PIXI.Texture.from('./wow.png');
+        const bad = PIXI.Texture.from('./illegal.png');
+        const peg = PIXI.Texture.from('./peg_tut.png');
 
         let cross = new ArraySet();
         let current = new ArrayMap();
@@ -57,6 +58,20 @@ function Example() {
         for (let i = 0; i < 3; ++i) {
             const x = (i % 7) * 395;
             const y = Math.floor(i / 7) * 395;
+
+            let emptySprite;
+
+            if (i == 2) {
+                emptySprite = new PIXI.Sprite(bad);
+            }
+            else {
+                emptySprite = new PIXI.Sprite(empty);
+            }
+
+            emptySprite.anchor.set(0.5);
+            emptySprite.x = x;
+            emptySprite.y = y;
+            container.addChild(emptySprite);
 
             if (pegs.includes(i)) {
                 const pegSprite = new PIXI.Sprite(peg);
@@ -80,12 +95,6 @@ function Example() {
             }
 
             cross.add([x, y]);
-
-            const emptySprite = new PIXI.Sprite(empty);
-            emptySprite.anchor.set(0.5);
-            emptySprite.x = x;
-            emptySprite.y = y;
-            container.addChild(emptySprite);
         }
 
         container.x = app.screen.width / 2;
@@ -97,7 +106,7 @@ function Example() {
 
         function onDragStart(event) {
             this.data = event.data;
-            this.alpha = 0.5;
+            this.tint = 0xfec257;
             originX = this.x;
             originY = this.y;
         }
@@ -155,7 +164,7 @@ function Example() {
                 }
 
                 this.data = null;
-                this.alpha = 1;
+                this.tint = 0xffffff;
             }
         }
 

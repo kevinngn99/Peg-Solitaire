@@ -46,7 +46,7 @@ function App() {
   const [app, setApp] = useState(new PIXI.Application({ 
     width: window.innerWidth * ratio,
     height: window.innerHeight * ratio,
-    backgroundColor: 0x131342,
+    backgroundColor: 0x110e3d,
     resolution: 1,
     antialias: true
   }));
@@ -65,13 +65,24 @@ function App() {
         const container = new PIXI.Container();
         app.stage.addChild(container);
 
-        const empty = PIXI.Texture.from('./hole.svg');
+        const empty = PIXI.Texture.from('./hole.png');
         empty.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
-        const peg = PIXI.Texture.from('./peg.png');
+
+        const peg = PIXI.Texture.from('./peg_s.png');
         peg.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
+
+        const red = PIXI.Texture.from('./red.png');
+        red.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
+
+        const green = PIXI.Texture.from('./green.png');
+        green.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
+
+        const yellow = PIXI.Texture.from('./yellow.png');
+        yellow.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
         
         let cross = new ArraySet();
         let current = new ArrayMap();
+        let holes = new ArrayMap();
         const corners = [0, 1, 5, 6, 7, 8, 12, 13, 35, 36, 40, 41, 42, 43, 47, 48];
         let pegs;
         
@@ -90,6 +101,21 @@ function App() {
           const y = Math.floor(i / 7) * 95;
 
           if (!corners.includes(i)) {
+            const emptySprite = new PIXI.Sprite(empty);
+            emptySprite.anchor.set(0.5);
+            emptySprite.x = x;
+            emptySprite.y = y;
+            container.addChild(emptySprite);
+
+            holes.set([x, y], emptySprite);
+          }
+        }
+
+        for (let i = 0; i < 49; ++i) {
+          const x = (i % 7) * 95;
+          const y = Math.floor(i / 7) * 95;
+
+          if (!corners.includes(i)) {            
             if (pegs.includes(i)) {
               const pegSprite = new PIXI.Sprite(peg);
               pegSprite.anchor.set(0.5);
@@ -112,12 +138,6 @@ function App() {
             }
 
             cross.add([x, y]);
-
-            const emptySprite = new PIXI.Sprite(empty);
-            emptySprite.anchor.set(0.5);
-            emptySprite.x = x;
-            emptySprite.y = y;
-            container.addChild(emptySprite);
           }
         }
 
@@ -157,6 +177,7 @@ function App() {
         let originX, originY;
         let count = pegs.length;
         let time = 180;
+        let selected = [];
 
         const interval = setInterval(() => {
           --time;
@@ -199,9 +220,46 @@ function App() {
 
         function onDragStart(event) {
           this.data = event.data;
-          this.alpha = 0.5;
+          //this.alpha = 0.5;
+          this.tint = 0xfec257;
           originX = this.x;
           originY = this.y;
+
+          holes.get([originX, originY]).texture = yellow;
+          selected.push([originX, originY]);
+
+          const rMid = [originX + 95, originY], rEnd = [originX + 190, originY];
+          const lMid = [originX - 95, originY], lEnd = [originX - 190, originY];
+          const uMid = [originX, originY + 95], uEnd = [originX, originY + 190];
+          const dMid = [originX, originY - 95], dEnd = [originX, originY - 190];
+
+          if (cross.has(rMid) && cross.has(rEnd)) {
+            if (current.has(rMid) && !current.has(rEnd)) {
+              holes.get(rEnd).texture = green;
+              selected.push(rEnd);
+            }
+          }
+
+          if (cross.has(lMid) && cross.has(lEnd)) {
+            if (current.has(lMid) && !current.has(lEnd)) {
+              holes.get(lEnd).texture = green;
+              selected.push(lEnd);
+            }
+          }
+
+          if (cross.has(uMid) && cross.has(uEnd)) {
+            if (current.has(uMid) && !current.has(uEnd)) {
+              holes.get(uEnd).texture = green;
+              selected.push(uEnd);
+            }
+          }
+
+          if (cross.has(dMid) && cross.has(dEnd)) {
+            if (current.has(dMid) && !current.has(dEnd)) {
+              holes.get(dEnd).texture = green;
+              selected.push(dEnd);
+            }
+          }
         }
 
         function onDragMove() {
@@ -313,10 +371,16 @@ function App() {
               this.y = originY;
             }
 
+            for (const pos of selected) {
+              holes.get(pos).texture = empty;
+            }
+
+            selected = [];
+
             if (moved) {
               let endGame = true;
 
-              for (let [key, value] of current) {
+              for (const [key, value] of current) {
                 const pos = value.position;
                 const rMid = [pos.x + 95, pos.y], rEnd = [pos.x + 190, pos.y];
                 const lMid = [pos.x - 95, pos.y], lEnd = [pos.x - 190, pos.y];
@@ -373,9 +437,13 @@ function App() {
                   next.buttonMode = true;
                   next
                     .on('mousedown', onNextStart)
+                    .on('mousemove', onNextMove)
                     .on('mouseup', onNextEnd)
+                    .on('mouseupoutside', onNextMove)
                     .on('touchstart', onNextStart)
+                    .on('touchmove', onNextMove)
                     .on('touchend', onNextEnd)
+                    .on('touchendoutside', onNextMove);
                     container.addChild(next);
                 }
 
@@ -386,12 +454,18 @@ function App() {
             }
 
             this.data = null;
-            this.alpha = 1;
+            //this.alpha = 1;
+            this.tint = 0xffffff;
           }
         }
 
         function onNextStart() {
           this.alpha = 0.5;
+          this.begin = true;
+        }
+
+        function onNextMove() {
+          this.alpha = 1;
         }
 
         function onNextEnd() {
@@ -425,7 +499,7 @@ function App() {
   }, [app]);
 
   return (
-    <div id="container" style={{ transform: `scale(${scale})`, transformOrigin: `0 0`, width: `${100 * (1 / scale)}%`, height: window.innerHeight, backgroundColor: "#131342" }} />
+    <div id="container" style={{ transform: `scale(${scale})`, transformOrigin: `0 0`, width: `${100 * (1 / scale)}%`, height: window.innerHeight }} />
   );
 }
 
