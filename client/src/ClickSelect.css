@@ -1,0 +1,39 @@
+.ClickSelect {
+    text-align: center;
+  }
+  
+  .ClickSelect-logo {
+    height: 40vmin;
+    pointer-events: none;
+  }
+  
+  @media (prefers-reduced-motion: no-preference) {
+    .ClickSelect-logo {
+      animation: ClickSelect-logo-spin infinite 20s linear;
+    }
+  }
+  
+  .ClickSelect-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+  }
+  
+  .ClickSelect-link {
+    color: #61dafb;
+  }
+  
+  @keyframes ClickSelect-logo-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  

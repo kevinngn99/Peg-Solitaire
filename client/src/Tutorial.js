@@ -3,6 +3,7 @@ import './Tutorial.css';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './App';
+import ClickSelect from './ClickSelect';
 import Carousel from 'react-bootstrap/Carousel';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
@@ -39,7 +40,7 @@ function Tutorial() {
 
     if (start) {
         return (
-            <App />
+            <ClickSelect />
         );
     }
     else {
