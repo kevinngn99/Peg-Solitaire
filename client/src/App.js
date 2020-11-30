@@ -46,7 +46,7 @@ function App() {
   const [app, setApp] = useState(new PIXI.Application({ 
     width: window.innerWidth * ratio,
     height: window.innerHeight * ratio,
-    backgroundColor: 0x110e3d,
+    backgroundColor: 0x01013d,
     resolution: 1,
     antialias: true
   }));
@@ -68,11 +68,8 @@ function App() {
         const empty = PIXI.Texture.from('./hole.png');
         empty.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
 
-        const peg = PIXI.Texture.from('./peg_s.png');
+        const peg = PIXI.Texture.from('./peg.png');
         peg.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
-
-        const red = PIXI.Texture.from('./red.png');
-        red.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
 
         const green = PIXI.Texture.from('./green.png');
         green.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
@@ -91,6 +88,9 @@ function App() {
         }
         else if (level === 2) {
           pegs = [10, 16, 18, 22, 24, 26, 30, 32, 38, 45];
+        }
+        else if (level === 3) {
+          pegs = [3, 9, 10, 11, 15, 16, 18, 19, 21, 22, 26, 27, 29, 30, 32, 33, 37, 38, 39, 45];
         }
         else {
           pegs = [2, 3, 4, 9, 10, 11, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 37, 38, 39, 44, 45, 46];
@@ -121,6 +121,7 @@ function App() {
               pegSprite.anchor.set(0.5);
               pegSprite.x = x;
               pegSprite.y = y;
+              pegSprite.alpha = 0.75;
               pegSprite.interactive = true;
               pegSprite.buttonMode = true;
               pegSprite
@@ -167,7 +168,7 @@ function App() {
         timer.texture.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
         container.addChild(timer);
 
-        const round = new PIXI.Text('Round\n' + level + ' of 3', style);
+        const round = new PIXI.Text('Round\n' + level + ' of 4', style);
         round.anchor.set(0.5);
         round.x = 0;
         round.y = -95;
@@ -196,7 +197,7 @@ function App() {
             stats.texture.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
             container.addChild(stats);
 
-            if (level !== 3) {
+            if (level !== 4) {
               const next = new PIXI.Text('Continue', style);
               next.anchor.set(0.5);
               next.x = 570;
@@ -427,7 +428,7 @@ function App() {
                 stats.texture.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
                 container.addChild(stats);
 
-                if (level !== 3) {
+                if (level !== 4) {
                   const next = new PIXI.Text('Continue', style);
                   next.anchor.set(0.5);
                   next.x = 570;

@@ -59,7 +59,7 @@ function Tutorial() {
                             </Carousel.Item>
                             <Carousel.Item>
                                 <ItemCard image='./watch.jpg' button={false} title='What to Expect?' item='2'
-                                    content='There will be 3 rounds.
+                                    content='There will be 4 rounds.
                                     Each round increases in difficulty.
                                     There is a time limit of 3 minutes.
                                     If you go over time, the game is stopped.
