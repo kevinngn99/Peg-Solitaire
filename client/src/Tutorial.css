@@ -42,6 +42,11 @@
     border-radius: 50%;
 }
 
+.custom-modal {
+    width: 40%;
+    max-width: none!important;
+}
+
 @import '~bootstrap/dist/css/bootstrap.min.css';
 
 * {

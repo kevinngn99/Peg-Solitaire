@@ -48,8 +48,9 @@ function Example() {
         app.stage.addChild(container);
 
         const empty = PIXI.Texture.from('./wow.png');
-        const bad = PIXI.Texture.from('./illegal.png');
+        const bad = PIXI.Texture.from('./og.png');
         const peg = PIXI.Texture.from('./peg_tut.png');
+        const hole = PIXI.Texture.from('./hole_tut.png');
 
         let cross = new ArraySet();
         let current = new ArrayMap();
@@ -61,11 +62,14 @@ function Example() {
 
             let emptySprite;
 
-            if (i == 2) {
+            if (i == 0) {
+                emptySprite = new PIXI.Sprite(empty);
+            }
+            else if (i == 2) {
                 emptySprite = new PIXI.Sprite(bad);
             }
             else {
-                emptySprite = new PIXI.Sprite(empty);
+                emptySprite = new PIXI.Sprite(hole);
             }
 
             emptySprite.anchor.set(0.5);
