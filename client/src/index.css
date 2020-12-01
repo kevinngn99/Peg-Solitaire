@@ -25,3 +25,13 @@ code {
   font-weight: bold;
   font-style: normal;
 }
+
+@font-face {
+  font-family: 'Dosis-ExtraBold';
+  src: url(./fonts/Dosis-ExtraBold.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Dosis-SemiBold';
+  src: url(./fonts/Dosis-SemiBold.ttf) format('truetype');
+}

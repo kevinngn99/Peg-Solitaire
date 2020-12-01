@@ -16,6 +16,77 @@ function Tutorial() {
     const ratio = Math.min((wi / ws), (hi / hs));
     const scale = 1 / ratio;
     const [start, setStart] = useState(false);
+    const [cursor, setCursor] = useState('Select');
+    const [sound, setSound] = useState('On');
+    
+    const onGame = () => {
+        setStart(true);
+    }
+
+    const onCursor = () => {
+        if (cursor === 'Select') {
+            setCursor('Drag');
+        }
+        else {
+            setCursor('Select');
+        }
+    }
+
+    const onSound = () => {
+        if (sound === 'On') {
+            setSound('Off');
+        }
+        else {
+            setSound('On');
+        }
+    }
+
+    if (start && cursor === 'Select') {
+        return (
+            <ClickSelect />
+        );
+    }
+    else if (start && cursor === 'Drag') {
+        return (
+            <App />
+        );
+    }
+    else {
+        return (
+            <div className="Tutorial">
+                <header className="Tutorial-header">
+                    <div id="container" style={{ zoom: scale, margin: 'auto'}} >
+                        <div style={{ marginBottom: 60, color: '#ffffff', fontSize: 140, fontFamily: 'Dosis-ExtraBold', textShadow: '0px 10px 0 #434596'}}>
+                            Peg Solitaire
+                        </div>
+                        
+                        <custom-div>
+                            <button onClick={onGame} style={{ width: 340, height: 130, margin: 20, outline: 'none' }} class='game'>
+                                Play Game
+                            </button>
+
+                            <button style={{ width: 340, height: 130, margin: 20, outline: 'none' }} class='tutorial'>
+                                Tutorial
+                            </button>
+
+                            <button onClick={onCursor} style={{ width: 340, height: 130, margin: 20, outline: 'none' }} class='cursor'>
+                                Cursor: {cursor}
+                            </button>
+
+                            <button onClick={onSound} style={{ width: 340, height: 130, margin: 20, outline: 'none' }} class='sound'>
+                                Sound: {sound}
+                            </button>
+                        </custom-div>
+                    </div>
+                </header>
+            </div>
+        );
+    }
+}
+
+export default Tutorial;
+
+/*
 
     function ItemCard(props) {
         const onclick = () => {
@@ -38,17 +109,7 @@ function Tutorial() {
         );
     }
 
-    if (start) {
-        return (
-            <ClickSelect />
-        );
-    }
-    else {
-        return (
-            <div className="Tutorial">
-                <header className="Tutorial-header">
-                    <div id="container" style={{ zoom: scale, width: window.innerWidth, margin: 'auto'}} >
-                        <Carousel interval={null} style={{ width: 500, height: 500, margin: 'auto'}}>
+<Carousel interval={null} style={{ width: 500, height: 500, margin: 'auto'}}>
                             <Carousel.Item>
                                 <ItemCard image='./example.gif' button={false} title='How to Play?' item='1'
                                     content='
@@ -74,11 +135,4 @@ function Tutorial() {
                                 />
                             </Carousel.Item>
                         </Carousel>
-                    </div>
-                </header>
-            </div>
-        );
-    }
-}
-
-export default Tutorial;
+*/
