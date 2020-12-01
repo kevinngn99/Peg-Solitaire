@@ -35,3 +35,13 @@ code {
   font-family: 'Dosis-SemiBold';
   src: url(./fonts/Dosis-SemiBold.ttf) format('truetype');
 }
+
+@font-face {
+  font-family: 'Inter-Regular';
+  src: url(./fonts/Inter-Regular.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Inter-Bold';
+  src: url(./fonts/Inter-Bold.ttf) format('truetype');
+}

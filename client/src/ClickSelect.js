@@ -52,9 +52,7 @@ function ClickSelect() {
   }));
 
   useEffect(() => {
-    const font = new FontFaceObserver('DMSans', {
-      weight: 'bold'
-    });
+    const font = new FontFaceObserver('Dosis-ExtraBold');
   
     font.load().then(function () {
       document.getElementById('container').appendChild(app.view);
@@ -146,7 +144,8 @@ function ClickSelect() {
 
         const style = new PIXI.TextStyle({
           fill: '#FFFFFF',
-          fontFamily: 'DMSans',
+          fontSize: 30,
+          fontFamily: 'Dosis-ExtraBold',
           fontWeight: 'bold',
           align: 'center'
         });
