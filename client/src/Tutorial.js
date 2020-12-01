@@ -19,7 +19,7 @@ function Tutorial() {
     const [start, setStart] = useState(false);
     const [tutorial, setTutorial] = useState(false);
     const [cursor, setCursor] = useState('Select');
-    const [sound, setSound] = useState('On');
+    const [round, setRound] = useState(1);
     const [modalShow, setModalShow] = useState(false);
 
     function ItemCard(props) {
@@ -45,7 +45,7 @@ function Tutorial() {
                 <Modal dialogClassName='custom-modal' style={{ zoom: scale }} show={modalShow} onHide={() => setModalShow(false)} centered={true} animation={true}>
                     <Modal.Header closeButton='true' style={{ color: '#212529', fontSize: 20, fontFamily: 'Inter-Bold'}}>
                         <Modal.Title>
-                            Tutorial
+                            Tutorial: Drag and Drop
                         </Modal.Title>
                     </Modal.Header>
                     <Modal.Body style={{ backgroundColor: '#01013d' }}>
@@ -94,7 +94,7 @@ function Tutorial() {
                 <Modal dialogClassName='custom-modal' style={{ zoom: scale }} show={modalShow} onHide={() => setModalShow(false)} centered={true} animation={true}>
                     <Modal.Header closeButton='true' style={{ color: '#212529', fontSize: 20, fontFamily: 'Inter-Bold'}}>
                         <Modal.Title>
-                            Tutorial
+                            Tutorial: Click and Select
                         </Modal.Title>
                     </Modal.Header>
                     <Modal.Body style={{ backgroundColor: '#01013d' }}>
@@ -157,12 +157,12 @@ function Tutorial() {
         }
     }
 
-    const onSound = () => {
-        if (sound === 'On') {
-            setSound('Off');
+    const onRound = () => {
+        if (round === 4) {
+            setRound(1);
         }
         else {
-            setSound('On');
+            setRound(round + 1);
         }
     }
 
@@ -196,10 +196,6 @@ function Tutorial() {
 
                             <button onClick={onCursor} style={{ width: 340, height: 130, margin: 20, outline: 'none' }} className='cursor'>
                                 Cursor: {cursor}
-                            </button>
-
-                            <button onClick={onSound} style={{ width: 340, height: 130, margin: 20, outline: 'none' }} className='sound'>
-                                Sound: {sound}
                             </button>
                         </custom-div>
 

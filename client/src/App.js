@@ -119,7 +119,7 @@ function App() {
               pegSprite.anchor.set(0.5);
               pegSprite.x = x;
               pegSprite.y = y;
-              pegSprite.alpha = 0.75;
+              pegSprite.alpha = 0.85;
               pegSprite.interactive = true;
               pegSprite.buttonMode = true;
               pegSprite
@@ -153,21 +153,21 @@ function App() {
           align: 'center'
         });
 
-        const status = new PIXI.Text('Pegs\n' + pegs.length.toString() + ' of ' + pegs.length.toString(), style);
+        const status = new PIXI.Text('PEGS\n' + pegs.length.toString() + ' OF ' + pegs.length.toString(), style);
         status.anchor.set(0.5);
         status.x = 570;
         status.y = -95;
         status.texture.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
         container.addChild(status);
 
-        const timer = new PIXI.Text('Time\n3:00', style);
+        const timer = new PIXI.Text('TIME\n3:00', style);
         timer.anchor.set(0.5);
         timer.x = 285;
         timer.y = -95;
         timer.texture.baseTexture.mipmap = PIXI.MIPMAP_MODES.ON;
         container.addChild(timer);
 
-        const round = new PIXI.Text('Round\n' + level + ' of 4', style);
+        const round = new PIXI.Text('ROUND\n' + level + ' OF 4', style);
         round.anchor.set(0.5);
         round.x = 0;
         round.y = -95;
@@ -183,13 +183,13 @@ function App() {
           --time;
           const min = Math.floor(time / 60).toString();
           const sec = (time % 60).toString();
-          timer.text = (sec < 10) ? 'Time\n' + min + ':0' + sec : 'Time\n' + min + ':' + sec;
+          timer.text = (sec < 10) ? 'TIME\n' + min + ':0' + sec : 'TIME\n' + min + ':' + sec;
 
           if (time === 0) {
             clearInterval(interval);
 
             const score = Math.round(((pegs.length - count) / (pegs.length - 1)) * 100);
-            const stats = new PIXI.Text('Score\n' + score.toString() + '%', style);
+            const stats = new PIXI.Text('SCORE\n' + score.toString() + '%', style);
             stats.anchor.set(0.5);
             stats.x = 285;
             stats.y = 665;
@@ -197,7 +197,7 @@ function App() {
             container.addChild(stats);
 
             if (level !== 4) {
-              const next = new PIXI.Text('Continue', style);
+              const next = new PIXI.Text('CONTINUE', style);
               next.anchor.set(0.5);
               next.x = 570;
               next.y = 665;
@@ -293,7 +293,7 @@ function App() {
                     current.set([destX, destY], this);
 
                     --count;
-                    status.text = 'Pegs\n' + count.toString() + ' of ' + pegs.length.toString();
+                    status.text = 'PEGS\n' + count.toString() + ' OF ' + pegs.length.toString();
                     moved = true;
                   }
                   else {
@@ -312,7 +312,7 @@ function App() {
                     current.set([destX, destY], this);
 
                     --count;
-                    status.text = 'Pegs\n' + count.toString() + ' of ' + pegs.length.toString();
+                    status.text = 'PEGS\n' + count.toString() + ' OF ' + pegs.length.toString();
                     moved = true;
                   }
                   else {
@@ -333,7 +333,7 @@ function App() {
                     current.set([destX, destY], this);
 
                     --count;
-                    status.text = 'Pegs\n' + count.toString() + ' of ' + pegs.length.toString();
+                    status.text = 'PEGS\n' + count.toString() + ' OF ' + pegs.length.toString();
                     moved = true;
                   }
                   else {
@@ -352,7 +352,7 @@ function App() {
                     current.set([destX, destY], this);
 
                     --count;
-                    status.text = 'Pegs\n' + count.toString() + ' of ' + pegs.length.toString();
+                    status.text = 'PEGS\n' + count.toString() + ' OF ' + pegs.length.toString();
                     moved = true;
                   }
                   else {
@@ -420,7 +420,7 @@ function App() {
                 clearInterval(interval);
 
                 const score = Math.round(((pegs.length - count) / (pegs.length - 1)) * 100);
-                const stats = new PIXI.Text('Score\n' + score.toString() + '%', style);
+                const stats = new PIXI.Text('SCORE\n' + score.toString() + '%', style);
                 stats.anchor.set(0.5);
                 stats.x = 285;
                 stats.y = 665;
@@ -428,7 +428,7 @@ function App() {
                 container.addChild(stats);
 
                 if (level !== 4) {
-                  const next = new PIXI.Text('Continue', style);
+                  const next = new PIXI.Text('CONTINUE', style);
                   next.anchor.set(0.5);
                   next.x = 570;
                   next.y = 665;
